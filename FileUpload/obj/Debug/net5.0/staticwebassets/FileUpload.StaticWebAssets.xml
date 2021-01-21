@@ -1,0 +1,4 @@
+﻿<StaticWebAssets Version="1.0">
+  <ContentRoot BasePath="/" Path="E:\test\FileUpload\FileUpload\bin\Debug\net5.0\wwwroot\" />
+  <ContentRoot BasePath="/" Path="E:\test\FileUpload\FileUpload\obj\Debug\net5.0\scopedcss\bundle\" />
+</StaticWebAssets>

@@ -1,0 +1,65 @@
+﻿@page "/fileupload"
+@using System.ComponentModel.DataAnnotations
+@using System.IO
+@using System.Linq
+@using System.Threading
+@using Azure.Storage.Blobs
+@using Azure.Storage.Blobs.Models
+@using Azure.Storage
+@using Azure
+
+
+<h3>File Upload Component</h3>
+<label for="browseData"><b>Browse File</b></label>
+<p><InputFile id="browseData" OnChange="@OnInputFileChange" /></p>
+@{
+    var progressCss = "progress " + (displayProgress ? "" : "d-none");
+}
+
+<div class="@progressCss">
+    <div class="progress-bar" role="progressbar" style="@($"width: { progressBar }%")" aria-valuenow="@progressBar" aria-valuemin="0" aria-valuemax="100"></div>
+</div>
+
+@code {
+    private bool displayProgress = false;
+    private string result = string.Empty;
+    private string progressBar;
+    private int maxAllowedSize = 10 * 1024 * 1024;
+    private async Task OnInputFileChange(InputFileChangeEventArgs e)
+    {
+        var maxAllowedFiles = 1;
+
+        var inputFile = e.GetMultipleFiles(maxAllowedFiles).First();
+
+        var blobUri = new Uri("https://"
+                                  + "23storage23" +
+                                  ".blob.core.windows.net/" +
+                                  "upload" + "/" + inputFile.Name);
+
+
+        AzureSasCredential credential = new AzureSasCredential("?sv=2019-12-12&ss=b&srt=sco&sp=rwdlacx&se=2021-01-21T14:13:22Z&st=2021-01-21T06:13:22Z&spr=https&sig=D%2Bej4DOxLYOLYn5hT4s25alTFlNnA1ZpMFMY9Ux4wz0%3D");
+        BlobClient blobClient = new BlobClient(blobUri, credential, new BlobClientOptions());
+        displayProgress = true;
+
+        var res = await blobClient.UploadAsync(inputFile.OpenReadStream(maxAllowedSize), new BlobUploadOptions
+        {
+            HttpHeaders = new BlobHttpHeaders { ContentType = inputFile.ContentType },
+            TransferOptions = new StorageTransferOptions
+            {
+                InitialTransferSize = 1024 * 1024,
+                MaximumConcurrency = 10
+            },
+            ProgressHandler = new Progress<long>((progress) =>
+            {
+                progressBar = (100.0 * progress / inputFile.Size).ToString("0");
+
+            })
+
+        });
+
+
+
+
+
+    }
+}
