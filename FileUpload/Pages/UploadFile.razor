@@ -32,12 +32,12 @@
         var inputFile = e.GetMultipleFiles(maxAllowedFiles).First();
 
         var blobUri = new Uri("https://"
-                                  + "23storage23" +
+                                  + "<accountName>" +
                                   ".blob.core.windows.net/" +
-                                  "upload" + "/" + inputFile.Name);
+                                  "<containerName>" + "/" + inputFile.Name);
 
 
-        AzureSasCredential credential = new AzureSasCredential("?sv=2019-12-12&ss=b&srt=sco&sp=rwdlacx&se=2021-01-21T14:13:22Z&st=2021-01-21T06:13:22Z&spr=https&sig=D%2Bej4DOxLYOLYn5hT4s25alTFlNnA1ZpMFMY9Ux4wz0%3D");
+        AzureSasCredential credential = new AzureSasCredential("<sas token>");
         BlobClient blobClient = new BlobClient(blobUri, credential, new BlobClientOptions());
         displayProgress = true;
 
